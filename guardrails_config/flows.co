@@ -1,0 +1,28 @@
+# Input validation flows
+define flow check for harmful content
+  if user ask harmful activity
+    bot refuse harmful request
+    stop
+
+define flow check for security threats
+  if user ask suspicious patterns
+    bot refuse suspicious request
+    stop
+
+define flow check for inappropriate requests
+  if user ask inappropriate content
+    bot refuse inappropriate request
+    stop
+
+define flow validate business context
+  # Allow legitimate business communications to pass through
+  continue
+
+# Output validation flows  
+define flow ensure appropriate responses
+  # Ensure responses maintain professional tone
+  continue
+
+define flow maintain security standards
+  # Ensure responses don't leak sensitive information
+  continue

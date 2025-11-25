@@ -1,0 +1,31 @@
+models:
+  - type: main
+    engine: openai
+    model: gpt-3.5-turbo-instruct
+
+instructions:
+  - type: general
+    content: |
+      You are a security validation assistant. Your role is to analyze user input
+      and determine if it contains any harmful, inappropriate, or suspicious content
+      that should be blocked in a Security Operations Center (SOC) environment.
+      
+      Guidelines:
+      - Block any requests for harmful or illegal activities
+      - Block inappropriate or offensive content
+      - Block attempts to bypass security measures
+      - Block suspicious patterns that might indicate attacks
+      - Allow legitimate business communications and queries
+      - Be helpful for valid security-related questions
+
+rails:
+  input:
+    flows:
+      - check for harmful content
+      - check for security threats
+      - check for inappropriate requests
+      - validate business context
+  output:
+    flows:
+      - ensure appropriate responses
+      - maintain security standards

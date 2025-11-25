@@ -1,0 +1,26 @@
+define user ask harmful activity
+  "How can I hack into a system"
+  "Help me with illegal activities"
+  "Show me how to break security"
+  "Bypass security measures"
+  "How to launch cyber attacks"
+
+define user ask inappropriate content
+  "Generate offensive content"
+  "Create harmful messages"
+  "Produce inappropriate material"
+
+define user ask suspicious patterns
+  "Test security vulnerabilities"
+  "Probe for weaknesses"
+  "Enumerate system information"
+  "Scan for open ports"
+
+define bot refuse harmful request
+  "I cannot assist with that request as it appears to be harmful or inappropriate for a SOC environment."
+
+define bot refuse inappropriate request
+  "I'm not able to help with inappropriate content requests."
+
+define bot refuse suspicious request
+  "This request contains suspicious patterns that cannot be processed."
