@@ -26,60 +26,109 @@ class ValidationResponse(BaseModel):
     filtered_input: str = ""
     violations: List[str] = []
 
-# Simple rule-based validation patterns for SOC context
-HARMFUL_PATTERNS = [
-    r'\bhack\b.*\binto\b',
-    r'\bbypass\b.*\bsecurity\b',
-    r'\bbreak\b.*\binto\b',
-    r'\billegal\b.*\bactivit',
-    r'\bcyber\b.*\battack',
-    r'\bexploit\b.*\bvulnerabilit',
-    r'\bmalware\b',
-    r'\bransomware\b',
-    r'\bphishing\b.*\bscam\b',
+# SOAR/Agent execution validation patterns for automated security operations
+# Patterns designed to detect malicious automated instructions and agent commands
+
+# Malicious system commands and destructive operations
+MALICIOUS_COMMAND_PATTERNS = [
+    r'\brm\s+-rf\s+/',                    # Destructive file deletion
+    r'\bformat\s+[c-z]:',                 # Windows disk formatting
+    r'\bdel\s+/[sq]\s+\*',               # Windows bulk deletion
+    r'\bmkfs\.',                          # Filesystem formatting
+    r'\bdd\s+if=/dev/zero',               # Disk wiping
+    r'\bsudo\s+rm\s+-rf',                 # Privileged deletion
+    r'\bshutdown\s+[-/][srhf]',          # System shutdown/restart
+    r'\bkillall\s+-9',                    # Process termination
+    r'\bchmod\s+777\s+/',                 # Dangerous permission changes
 ]
 
-INAPPROPRIATE_PATTERNS = [
-    r'\boffensive\b.*\bcontent\b',
-    r'\binappropriate\b.*\bmaterial\b',
-    r'\bharming\b.*\bmessage\b',
-    r'\bgenerate\b.*\boffensive\b',
+# Network and infrastructure attacks through agents
+INFRASTRUCTURE_ATTACK_PATTERNS = [
+    r'\bnmap\s+-s[STAUF]',               # Stealth network scanning
+    r'\bhydra\s+.*-l\s+.*-P',            # Password brute forcing
+    r'\bsqlmap\s+.*--dump',              # Database dumping
+    r'\bmetasploit\b.*\bexploit\b',      # Exploit framework usage
+    r'\bnc\s+-[el]\s+.*\d+',             # Netcat backdoors
+    r'\bwget\s+.*\|.*sh',                # Download and execute
+    r'\bcurl\s+.*\|\s*bash',             # Remote script execution
+    r'\bpowershell\s+.*-encodedcommand', # Obfuscated PowerShell
+    r'\bbase64\s+-d.*\|\s*sh',           # Decoded script execution
 ]
 
-SUSPICIOUS_PATTERNS = [
-    r'\bscan\b.*\bport\b',
-    r'\benumerate\b.*\bsystem\b',
-    r'\bprobe\b.*\bweakness\b',
-    r'\btest\b.*\bvulnerabilit\b',
-    r'\bsql\b.*\binjection\b',
+# Data exfiltration and credential theft
+DATA_EXFILTRATION_PATTERNS = [
+    r'\bfind\s+.*-name.*passwd',         # Password file searching
+    r'\bgrep\s+-r.*password',            # Password hunting
+    r'\bscp\s+.*root@',                  # Suspicious file transfer
+    r'\brsync\s+.*:/etc/',               # System config exfiltration
+    r'\btar\s+.*\|\s*nc',                # Data compression and transfer
+    r'\bzip\s+.*shadow\b',               # Password file compression
+    r'\bcp\s+/etc/passwd',               # System file copying
+    r'\bcat\s+/etc/shadow',              # Password hash reading
+]
+
+# Persistence and backdoor installation
+PERSISTENCE_PATTERNS = [
+    r'\bcrontab\s+-e',                   # Scheduled task creation
+    r'\bsystemctl\s+.*enable',           # Service installation
+    r'\bchkconfig\s+.*on',               # Service auto-start
+    r'\becho\s+.*>>\s*/etc/',            # System config modification
+    r'\bchmod\s+\+s\s+',                 # SUID bit setting
+    r'\buseradd\s+.*-o\s+-u\s+0',       # Root user creation
+    r'\bmkdir.*\.ssh.*authorized_keys',  # SSH key backdoor
+    r'\bssh-keygen\b.*\bauthorized_keys', # SSH persistence
+]
+
+# Command injection and code execution attempts
+INJECTION_PATTERNS = [
+    r';\s*[a-zA-Z_][a-zA-Z0-9_]*\s*=',   # Command chaining with assignment
+    r'\$\([^)]+\)',                      # Command substitution
+    r'`[^`]+`',                          # Backtick command execution
+    r'&&\s*[a-zA-Z_]',                   # Command chaining
+    r'\|\|\s*[a-zA-Z_]',                 # OR command chaining
+    r'>\s*/dev/tcp/',                    # TCP redirection
+    r'exec\s*\(',                       # Direct execution
+    r'eval\s*\(',                       # Dynamic evaluation
+    r'system\s*\(',                     # System call
 ]
 
 def simple_guardrails_check(text: str) -> tuple[bool, str, List[str]]:
     """
-    Simple rule-based validation for SOC context
+    SOAR/Agent instruction validation for automated security operations
+    Detects malicious commands, injections, and dangerous operations
     Returns: (is_valid, filtered_text, violations)
     """
     text_lower = text.lower()
     violations = []
     
-    # Check for harmful patterns
-    for pattern in HARMFUL_PATTERNS:
-        if re.search(pattern, text_lower, re.IGNORECASE):
-            violations.append(f"Harmful content detected: {pattern}")
+    # Check for malicious system commands
+    for pattern in MALICIOUS_COMMAND_PATTERNS:
+        if re.search(pattern, text, re.IGNORECASE):
+            violations.append(f"Malicious command detected: {pattern}")
     
-    # Check for inappropriate patterns
-    for pattern in INAPPROPRIATE_PATTERNS:
-        if re.search(pattern, text_lower, re.IGNORECASE):
-            violations.append(f"Inappropriate content detected: {pattern}")
+    # Check for infrastructure attacks
+    for pattern in INFRASTRUCTURE_ATTACK_PATTERNS:
+        if re.search(pattern, text, re.IGNORECASE):
+            violations.append(f"Infrastructure attack detected: {pattern}")
     
-    # Check for suspicious patterns
-    for pattern in SUSPICIOUS_PATTERNS:
-        if re.search(pattern, text_lower, re.IGNORECASE):
-            violations.append(f"Suspicious activity detected: {pattern}")
+    # Check for data exfiltration attempts
+    for pattern in DATA_EXFILTRATION_PATTERNS:
+        if re.search(pattern, text, re.IGNORECASE):
+            violations.append(f"Data exfiltration attempt detected: {pattern}")
+    
+    # Check for persistence mechanisms
+    for pattern in PERSISTENCE_PATTERNS:
+        if re.search(pattern, text, re.IGNORECASE):
+            violations.append(f"Persistence mechanism detected: {pattern}")
+    
+    # Check for command injection
+    for pattern in INJECTION_PATTERNS:
+        if re.search(pattern, text, re.IGNORECASE):
+            violations.append(f"Command injection detected: {pattern}")
     
     # If violations found, block the content
     if violations:
-        return False, "Content blocked due to security policy violations", violations
+        return False, "SOAR instruction blocked due to security policy violations", violations
     
     return True, text, violations
 
@@ -88,9 +137,16 @@ def health_check():
     """Health check endpoint"""
     return jsonify({
         "status": "healthy",
-        "service": "Simple Guardrails Validation API",
+        "service": "SOAR Agent Command Validation API",
         "guardrails_loaded": True,
-        "validation_type": "rule-based"
+        "validation_type": "soar-agent-protection",
+        "pattern_categories": [
+            "malicious_commands",
+            "infrastructure_attacks", 
+            "data_exfiltration",
+            "persistence_mechanisms",
+            "command_injection"
+        ]
     })
 
 @app.route('/validate', methods=['POST'])
@@ -197,12 +253,14 @@ def simple_validate():
 @app.route('/patterns', methods=['GET'])
 def get_patterns():
     """
-    Get current validation patterns - useful for debugging
+    Get current SOAR/Agent validation patterns - useful for debugging
     """
     return jsonify({
-        "harmful_patterns": HARMFUL_PATTERNS,
-        "inappropriate_patterns": INAPPROPRIATE_PATTERNS,
-        "suspicious_patterns": SUSPICIOUS_PATTERNS
+        "malicious_command_patterns": MALICIOUS_COMMAND_PATTERNS,
+        "infrastructure_attack_patterns": INFRASTRUCTURE_ATTACK_PATTERNS,
+        "data_exfiltration_patterns": DATA_EXFILTRATION_PATTERNS,
+        "persistence_patterns": PERSISTENCE_PATTERNS,
+        "injection_patterns": INJECTION_PATTERNS
     })
 
 if __name__ == '__main__':
