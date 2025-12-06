@@ -1,28 +1,41 @@
-# Input validation flows
-define flow check for harmful content
-  if user ask harmful activity
-    bot refuse harmful request
+# SOAR Agent Command Validation Flows
+# Input validation flows for automated security operations
+
+define flow check for malicious commands
+  if user ask malicious command
+    bot refuse malicious command
     stop
 
-define flow check for security threats
-  if user ask suspicious patterns
-    bot refuse suspicious request
+define flow check for infrastructure attacks
+  if user ask infrastructure attack
+    bot refuse infrastructure attack
     stop
 
-define flow check for inappropriate requests
-  if user ask inappropriate content
-    bot refuse inappropriate request
+define flow check for data exfiltration
+  if user ask data exfiltration
+    bot refuse data exfiltration
     stop
 
-define flow validate business context
-  # Allow legitimate business communications to pass through
-  continue
+define flow check for persistence mechanisms
+  if user ask persistence mechanism
+    bot refuse persistence mechanism
+    stop
+
+define flow check for command injection
+  if user ask command injection
+    bot refuse command injection
+    stop
+
+define flow validate legitimate soar operations
+  if user ask legitimate soar operation
+    bot assist legitimate soar
+    continue
 
 # Output validation flows  
 define flow ensure appropriate responses
-  # Ensure responses maintain professional tone
+  # Ensure responses maintain professional tone for security context
   continue
 
 define flow maintain security standards
-  # Ensure responses don't leak sensitive information
+  # Ensure responses don't leak sensitive security information
   continue
