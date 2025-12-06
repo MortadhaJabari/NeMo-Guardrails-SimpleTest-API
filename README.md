@@ -388,26 +388,7 @@ For high-volume environments:
 - Tune Gunicorn worker processes
 - Monitor resource usage with included Prometheus metrics
 
-## 📄 License
 
-MIT License - see LICENSE file for details
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
-
-## 📞 Support
-
-- **Repository**: [NeMo-Guardrails-SimpleTest-API](https://github.com/MortadhaJabari/NeMo-Guardrails-SimpleTest-API)
-- **Docker Hub**: [jabarimortadha/nemo-guardrails-soar-api](https://hub.docker.com/r/jabarimortadha/nemo-guardrails-soar-api)
-- **Issues**: GitHub Issues
-- **Documentation**: README.md and inline code comments
-
----
 
 **Version**: 1.0.0  
 **Size**: ~1.2GB (includes NeMo Guardrails and dependencies)  
